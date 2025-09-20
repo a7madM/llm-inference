@@ -1,1 +1,1 @@
-uvicorn server:app --reload --port 5080
+uvicorn server:app --reload --host 0.0.0.0 --port 5080

@@ -8,7 +8,7 @@ from time import time
 
 # Ollama API settings
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
-MODEL_NAME = os.getenv("MODEL_NAME", "command-r7b-arabic:7b")
+MODEL_NAME = os.getenv("MODEL_NAME", "qwen3:1.7b")
 API_URL = f"{OLLAMA_URL}/api/generate"
 
 app = FastAPI(

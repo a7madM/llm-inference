@@ -8,7 +8,7 @@ from time import time
 
 # Ollama API settings
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
-MODEL_NAME = os.getenv("MODEL_NAME", "qwen3:1.7b")
+MODEL_NAME = os.getenv("MODEL_NAME", "deepseek-r1:1.5b")
 API_URL = f"{OLLAMA_URL}/api/generate"
 
 app = FastAPI(

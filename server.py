@@ -1,12 +1,15 @@
+import os
 from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List
 import requests
 import json
 from time import time
+
 # Ollama API settings
-OLLAMA_URL = "http://localhost:11434/api/generate"
-MODEL_NAME = "command-r7b-arabic:7b"
+OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
+MODEL_NAME = os.getenv("MODEL_NAME", "command-r7b-arabic:7b")
+API_URL = f"{OLLAMA_URL}/api/generate"
 
 app = FastAPI(
     title="Local Multilingual NER Service",
@@ -70,7 +73,7 @@ Text: {input_data.text}
 
     # Call Ollama API
     response = requests.post(
-        OLLAMA_URL,
+        API_URL,
         json={"model": MODEL_NAME, "prompt": prompt, "stream": False},
     )
 
@@ -113,7 +116,7 @@ def analyze_sentiment(input_data: InputText):
     """
 
         response = requests.post(
-            OLLAMA_URL,
+            API_URL,
             json={"model": MODEL_NAME, "prompt": prompt, "stream": False},
         )
 

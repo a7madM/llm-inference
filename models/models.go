@@ -13,12 +13,6 @@ type Entities struct {
 	Events        []string `json:"events"`
 }
 
-// Sentiment represents the sentiment analysis response
-type Sentiment struct {
-	Sentiment  string  `json:"sentiment"`
-	Confidence float64 `json:"confidence"`
-}
-
 // ErrorResponse represents an error response
 type ErrorResponse struct {
 	Error string `json:"error"`
@@ -50,4 +44,11 @@ type OllamaRequest struct {
 // OllamaResponse represents a response from the Ollama API
 type OllamaResponse struct {
 	Response string `json:"response"`
+}
+
+type SimilarityResponse struct {
+	Text1           string  `json:"text1"`
+	Text2           string  `json:"text2"`
+	SimilarityScore float64 `json:"similarity_score"`
+	ShouldMerge     bool    `json:"should_be_merged"`
 }

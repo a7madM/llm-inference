@@ -22,10 +22,9 @@ func main() {
 	// Initialize services
 	ollamaService := services.NewOllamaService(cfg)
 	nerService := services.NewNERService(ollamaService)
-	sentimentService := services.NewSentimentService(ollamaService)
-
+	similarityService := services.NewSimilarityService(ollamaService)
 	// Initialize handlers
-	handler := handlers.NewHandler(nerService, sentimentService)
+	handler := handlers.NewHandler(nerService, similarityService)
 
 	// Setup routes
 	router := routes.SetupRouter(handler)

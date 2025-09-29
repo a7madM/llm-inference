@@ -235,6 +235,7 @@ func healthCheck(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":  "healthy",
 		"service": "Local Multilingual NER Service",
+		"uptime":  time.Now().UTC().Format(time.RFC3339),
 		"version": "1.2.0",
 	})
 }

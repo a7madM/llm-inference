@@ -293,8 +293,8 @@ func main() {
 	router := setupRouter()
 
 	// Start server
-	fmt.Printf("Server starting on :%d\n", 8000)
-	if err := router.Run(":8000"); err != nil {
+	fmt.Printf("Server starting on :%d\n", 8090)
+	if err := router.Run(":8090"); err != nil {
 		log.Fatal("Failed to start server:", err)
 	}
 }

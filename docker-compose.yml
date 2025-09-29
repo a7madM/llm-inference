@@ -3,8 +3,9 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
+    image: llm-inference:latest
     ports:
-      - "8000:8000"
+      - "8090:8090"
     volumes:
       - .:/app
     working_dir: /app

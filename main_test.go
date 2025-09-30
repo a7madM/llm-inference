@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"llm-inference/config"
-	"llm-inference/handlers"
 	"llm-inference/services"
 )
 
@@ -27,21 +26,5 @@ func TestServiceInitialization(t *testing.T) {
 	ollamaService := services.NewOllamaService(cfg)
 	if ollamaService == nil {
 		t.Fatal("OllamaService should not be nil")
-	}
-
-	nerService := services.NewNERService(ollamaService)
-	if nerService == nil {
-		t.Fatal("NERService should not be nil")
-	}
-
-	sentimentService := services.NewSentimentService(ollamaService)
-	if sentimentService == nil {
-		t.Fatal("SentimentService should not be nil")
-	}
-
-	// Test handler initialization
-	handler := handlers.NewHandler(nerService, sentimentService)
-	if handler == nil {
-		t.Fatal("Handler should not be nil")
 	}
 }

@@ -45,42 +45,28 @@ make docker-run
 ```
 
 ## API Endpoints
-
-### Named Entity Recognition
 ```bash
-curl -X POST http://localhost:5080/api/v1/entities \
+
+### NER and Sentiment Analysis
+```bash
+curl http://localhost:8090/api/v1/text1=some_value&text2=some_value_2&entity_type=persons \
   -H "Content-Type: application/json" \
-  -d '{"text":"Barack Obama visited Berlin last year for a climate summit."}'
 ```
 
 Response:
-```json
+```
 {
-  "persons": ["Barack Obama"],
-  "locations": ["Berlin"],
-  "organizations": [],
-  "events": ["climate summit"]
+  similarity_score: 0.95,
+  should_be_merged: true,
+  thinking: "some text explaining the llm thinking strategy"
 }
 ```
 
-### Sentiment Analysis
-```bash
-curl -X POST http://localhost:5080/api/v1/sentiment \
-  -H "Content-Type: application/json" \
-  -d '{"text":"This is a wonderful day!"}'
-```
-
-Response:
-```json
-{
-  "sentiment": "positive",
-  "confidence": 0.95
-}
-```
+### Text Similarity
 
 ### Health Check
 ```bash
-curl http://localhost:5080/health
+curl http://localhost:8090/health
 ```
 
 ## Configuration

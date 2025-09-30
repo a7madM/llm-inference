@@ -26,9 +26,9 @@ func NewHandler(similarityService *services.SimilarityService) *Handler {
 func (h *Handler) HealthCheck(c *gin.Context) {
 	response := models.HealthResponse{
 		Status:  "healthy",
-		Service: "Local Multilingual NER Service",
+		Service: "LLM Inference Service",
 		Uptime:  time.Now().UTC().Format(time.RFC3339),
-		Version: "1.2.0",
+		Version: "0.1.0",
 	}
 	c.JSON(http.StatusOK, response)
 }
@@ -56,13 +56,12 @@ func (h *Handler) ComputeSimilarity(c *gin.Context) {
 // ServiceInfo handles the service information endpoint
 func (h *Handler) ServiceInfo(c *gin.Context) {
 	response := models.ServiceInfo{
-		Title:       "Local Multilingual NER Service",
-		Description: "Extracts Persons, Locations, Organizations, Events from text (Arabic, English, German). Preserves original language.",
-		Version:     "1.2.0",
+		Title:       "LLM Inference Service",
+		Description: "A service for inference tasks using large language models.",
+		Version:     "0.1.0",
 		Endpoints: map[string]string{
-			"entities":  "/api/v1/entities",
-			"sentiment": "/api/v1/similarity",
-			"health":    "/health",
+			"similarity": "/api/v1/similarity",
+			"health":     "/health",
 		},
 	}
 	c.JSON(http.StatusOK, response)

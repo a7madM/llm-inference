@@ -4,6 +4,8 @@
 BINARY_NAME=llm-inference
 GO_VERSION=1.25
 PORT=5080
+REGISTRY=registry.whatisgoing.com
+IMAGE_NAME=$(REGISTRY)/$(BINARY_NAME):latest
 
 # Build commands
 .PHONY: build
@@ -24,6 +26,13 @@ bash:
 .PHONY: clean-images
 clean-images:
 	docker rmi $(BINARY_NAME) || true
+
+.PHONY: release
+release:
+	docker build -t $(BINARY_NAME) .
+	docker tag $(BINARY_NAME) $(IMAGE_NAME)
+	docker push $(IMAGE_NAME)
+
 # Help
 .PHONY: help
 help:

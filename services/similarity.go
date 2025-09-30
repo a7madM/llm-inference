@@ -7,6 +7,10 @@ import (
 )
 
 func (s *OllamaService) Similarity(text1, text2, entityType string) (models.OllamaResponse, error) {
+	return s.CallAPI(generatePrompt(text1, text2, entityType))
+}
+
+func generatePrompt(text1, text2, entityType string) string {
 	prompt := fmt.Sprintf(`You are an intilligent model. Given the following two texts
 	 compute a similarity score between 0 and 1, where 1 means identical meaning and 0 means completely different. Also, indicate if the texts should be merged based on their similarity. 
 	 
@@ -27,7 +31,7 @@ func (s *OllamaService) Similarity(text1, text2, entityType string) (models.Olla
 	9. Round the similarity score to two decimal places.
 
 	Text 1: %s\nText 2: %s`, entityType, text1, text2)
-	return s.CallAPI(prompt)
+	return prompt
 }
 
 type SimilarityService struct {
@@ -35,9 +39,7 @@ type SimilarityService struct {
 }
 
 func NewSimilarityService(ollama *OllamaService) *SimilarityService {
-	return &SimilarityService{
-		ollama: ollama,
-	}
+	return &SimilarityService{ollama: ollama}
 }
 
 func (s *SimilarityService) ComputeSimilarity(text1, text2, entityType string) (*models.SimilarityResponse, error) {

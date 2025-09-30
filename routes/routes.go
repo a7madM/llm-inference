@@ -34,7 +34,6 @@ func SetupRouter(handler *handlers.Handler) *gin.Engine {
 func setupAPIRoutes(router *gin.Engine, handler *handlers.Handler) {
 	v1 := router.Group("/api/v1")
 	{
-		v1.POST("/entities", handler.ExtractEntities)
 		v1.GET("/similarity", handler.ComputeSimilarity)
 	}
 }

@@ -10,10 +10,6 @@ import (
 	"llm-inference/models"
 )
 
-type OllamaAPI interface {
-	ParseJSON(string) map[string]interface{}
-}
-
 // OllamaService handles communication with Ollama API
 type OllamaService struct {
 	config *config.Config
@@ -53,7 +49,8 @@ func (s *OllamaService) CallAPI(prompt string) (models.OllamaResponse, error) {
 	if err := json.NewDecoder(resp.Body).Decode(&ollamaResp); err != nil {
 		return models.OllamaResponse{}, fmt.Errorf("failed to decode response: %v", err)
 	}
+	ollamaResp.ParseJSON()
 
-	fmt.Println("Ollama API response:", ollamaResp.Response)
+	fmt.Println("Ollama API Response:", ollamaResp)
 	return ollamaResp, nil
 }

@@ -27,9 +27,4 @@ func TestServiceInitialization(t *testing.T) {
 	if ollamaService == nil {
 		t.Fatal("OllamaService should not be nil")
 	}
-
-	nerService := services.NewNERService(ollamaService)
-	if nerService == nil {
-		t.Fatal("NERService should not be nil")
-	}
 }

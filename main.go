@@ -13,29 +13,21 @@ import (
 )
 
 func main() {
-	// Load configuration
 	cfg := config.Load()
 
-	// Set Gin mode
 	gin.SetMode(cfg.GinMode)
 
-	// Initialize services
 	ollamaService := services.NewOllamaService(cfg)
-	nerService := services.NewNERService(ollamaService)
 	similarityService := services.NewSimilarityService(ollamaService)
-	// Initialize handlers
-	handler := handlers.NewHandler(nerService, similarityService)
+	handler := handlers.NewHandler(similarityService)
 
-	// Setup routes
 	router := routes.SetupRouter(handler)
 
-	// Print startup information
-	fmt.Printf("Starting Local Multilingual NER Service v1.2.0\n")
+	fmt.Println("Starting LLM Inference Service v1.2.0")
 	fmt.Printf("Ollama URL: %s\n", cfg.OllamaURL)
 	fmt.Printf("Model: %s\n", cfg.ModelName)
 	fmt.Printf("Server starting on :%s\n", cfg.Port)
 
-	// Start server
 	if err := router.Run(":" + cfg.Port); err != nil {
 		log.Fatal("Failed to start server:", err)
 	}

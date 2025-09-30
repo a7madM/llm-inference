@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"time"
 
@@ -14,46 +13,13 @@ import (
 
 // Handler holds the service dependencies
 type Handler struct {
-	nerService        *services.NERService
 	similarityService *services.SimilarityService
 }
 
-func NewHandler(nerService *services.NERService, similarityService *services.SimilarityService) *Handler {
+func NewHandler(similarityService *services.SimilarityService) *Handler {
 	return &Handler{
-		nerService:        nerService,
 		similarityService: similarityService,
 	}
-}
-
-// ExtractEntities handles the entities extraction endpoint
-func (h *Handler) ExtractEntities(c *gin.Context) {
-	var input models.InputText
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, models.ErrorResponse{Error: err.Error()})
-		return
-	}
-
-	// Log request
-	textPreview := input.Text
-	if len(textPreview) > 50 {
-		textPreview = textPreview[:50] + "..."
-	}
-	fmt.Printf("Received text for NER: %s\n", textPreview)
-
-	startTime := time.Now()
-
-	// Extract entities
-	entities, err := h.nerService.ExtractEntities(input.Text)
-	if err != nil {
-		log.Printf("Error extracting entities: %v", err)
-		c.JSON(http.StatusInternalServerError, models.ErrorResponse{Error: "Unable to extract entities"})
-		return
-	}
-
-	elapsed := time.Since(startTime)
-	fmt.Printf("Extraction completed in %.2f seconds.\n", elapsed.Seconds())
-
-	c.JSON(http.StatusOK, entities)
 }
 
 // HealthCheck handles the health check endpoint

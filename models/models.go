@@ -1,5 +1,9 @@
 package models
 
+import (
+	"strings"
+)
+
 // InputText represents the input for API requests
 type InputText struct {
 	Text string `json:"text" binding:"required"`
@@ -43,7 +47,25 @@ type OllamaRequest struct {
 
 // OllamaResponse represents a response from the Ollama API
 type OllamaResponse struct {
-	Response string `json:"response"`
+	Response     string `json:"response"`
+	Thinking     string `json:"thinking"`
+	JSONResponse string `json:"json_response"`
+}
+
+func (o *OllamaResponse) ParseJSON() {
+	rawOutput := o.Response
+
+	// Find the first '{' and the last '}' to extract the JSON part
+
+	start := strings.Index(rawOutput, "{")
+	end := strings.LastIndex(rawOutput, "}")
+
+	o.Thinking = rawOutput[0:start] // Text before JSON
+
+	if start != -1 && end != -1 && start < end {
+		jsonPart := rawOutput[start : end+1]
+		o.JSONResponse = jsonPart
+	}
 }
 
 type SimilarityResponse struct {
@@ -51,4 +73,5 @@ type SimilarityResponse struct {
 	Text2           string  `json:"text2"`
 	SimilarityScore float64 `json:"similarity_score"`
 	ShouldMerge     bool    `json:"should_be_merged"`
+	Thinking        string  `json:"thinking,omitempty"`
 }

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"llm-inference/models"
-	"strings"
 )
 
 func (s *OllamaService) Similarity(text1, text2, entityType string) (models.OllamaResponse, error) {
@@ -42,35 +41,30 @@ func NewSimilarityService(ollama *OllamaService) *SimilarityService {
 }
 
 func (s *SimilarityService) ComputeSimilarity(text1, text2, entityType string) (*models.SimilarityResponse, error) {
-	response, err := s.ollama.Similarity(text1, text2, entityType)
+	ollamaResponse, err := s.ollama.Similarity(text1, text2, entityType)
 
 	if err != nil {
 		return nil, err
 	}
 
-	data := s.ParseJSON(response.Response)
+	parsedResponse := s.ParseJSON(ollamaResponse)
 
 	return &models.SimilarityResponse{
 		Text1:           text1,
 		Text2:           text2,
-		SimilarityScore: data.SimilarityScore,
-		ShouldMerge:     data.ShouldBeMerged,
+		SimilarityScore: parsedResponse.SimilarityScore,
+		ShouldMerge:     parsedResponse.ShouldBeMerged,
+		Thinking:        ollamaResponse.Thinking,
 	}, nil
 }
 
 // Safe JSON parsing with fallback
-func (s *SimilarityService) ParseJSON(rawOutput string) ResponseSchema {
-
+func (s *SimilarityService) ParseJSON(response models.OllamaResponse) ResponseSchema {
 	var result ResponseSchema
 
-	start := strings.Index(rawOutput, "{")
-	end := strings.LastIndex(rawOutput, "}")
-	if start != -1 && end != -1 && start < end {
-		jsonPart := rawOutput[start : end+1]
-		err := json.Unmarshal([]byte(jsonPart), &result)
-		if err == nil {
-			return result
-		}
+	err := json.Unmarshal([]byte(response.JSONResponse), &result)
+	if err == nil {
+		return result
 	}
 
 	return result

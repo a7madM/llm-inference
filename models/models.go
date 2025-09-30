@@ -60,7 +60,11 @@ func (o *OllamaResponse) ParseJSON() {
 	start := strings.Index(rawOutput, "{")
 	end := strings.LastIndex(rawOutput, "}")
 
-	o.Thinking = rawOutput[0:start] // Text before JSON
+	if start != -1 {
+		o.Thinking = rawOutput[0:start] // Text before JSON
+	} else {
+		o.Thinking = rawOutput // No JSON found, treat all as thinking
+	}
 
 	if start != -1 && end != -1 && start < end {
 		jsonPart := rawOutput[start : end+1]

@@ -19,7 +19,8 @@ func main() {
 
 	ollamaService := services.NewOllamaService(cfg)
 	similarityService := services.NewSimilarityService(ollamaService)
-	handler := handlers.NewHandler(similarityService)
+	entityEnhancementService := services.NewEntityEnhancementService(ollamaService)
+	handler := handlers.NewHandler(similarityService, entityEnhancementService)
 
 	router := routes.SetupRouter(handler)
 

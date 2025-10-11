@@ -13,12 +13,14 @@ import (
 
 // Handler holds the service dependencies
 type Handler struct {
-	similarityService *services.SimilarityService
+	similarityService        *services.SimilarityService
+	entityEnhancementService *services.EntityEnhancementService
 }
 
-func NewHandler(similarityService *services.SimilarityService) *Handler {
+func NewHandler(similarityService *services.SimilarityService, entityEnhancementService *services.EntityEnhancementService) *Handler {
 	return &Handler{
-		similarityService: similarityService,
+		similarityService:        similarityService,
+		entityEnhancementService: entityEnhancementService,
 	}
 }
 
@@ -53,6 +55,34 @@ func (h *Handler) ComputeSimilarity(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
+// EnhanceEntities handles the entity enhancement endpoint
+func (h *Handler) EnhanceEntities(c *gin.Context) {
+	var input models.EntityEnhancementRequest
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, models.ErrorResponse{Error: err.Error()})
+		return
+	}
+
+	// Log request
+	fmt.Printf("Enhancing %d %s entities...\n", len(input.Entities), input.EntityType)
+
+	startTime := time.Now()
+
+	// Enhance entities
+	result, err := h.entityEnhancementService.EnhanceEntities(input.Entities, input.EntityType)
+	if err != nil {
+		fmt.Printf("Error enhancing entities: %v\n", err)
+		c.JSON(http.StatusInternalServerError, models.ErrorResponse{Error: "Failed to enhance entities"})
+		return
+	}
+
+	elapsed := time.Since(startTime)
+	fmt.Printf("Entity enhancement completed in %.2f seconds. Processed: %d, Enhanced: %d, Removed: %d\n",
+		elapsed.Seconds(), result.ProcessedCount, len(result.EnhancedEntities), result.RemovedCount)
+
+	c.JSON(http.StatusOK, result)
+}
+
 // ServiceInfo handles the service information endpoint
 func (h *Handler) ServiceInfo(c *gin.Context) {
 	response := models.ServiceInfo{
@@ -60,8 +90,9 @@ func (h *Handler) ServiceInfo(c *gin.Context) {
 		Description: "A service for inference tasks using large language models.",
 		Version:     "0.1.0",
 		Endpoints: map[string]string{
-			"similarity": "/api/v1/similarity",
-			"health":     "/health",
+			"similarity":       "/api/v1/similarity",
+			"enhance_entities": "/api/v1/enhance-entities",
+			"health":           "/health",
 		},
 	}
 	c.JSON(http.StatusOK, response)

@@ -17,6 +17,8 @@ build:
 up:
 	docker compose up
 
+dev: up bash
+
 .PHONY: down
 down:
 	docker compose down
@@ -33,6 +35,8 @@ release-local:
 	docker build -t $(BINARY_NAME) .
 	docker tag $(BINARY_NAME) $(IMAGE_NAME)
 	docker push $(IMAGE_NAME)
+	docker push $(REGISTRY)/$(BINARY_NAME):latest
+	
 
 # Help
 .PHONY: help

@@ -82,16 +82,12 @@ type SimilarityResponse struct {
 
 // EntityEnhancementRequest represents the request for entity enhancement
 type EntityEnhancementRequest struct {
-	Entities   []string `json:"entities" binding:"required"`
-	EntityType string   `json:"entity_type" binding:"required"`
+	Entity string `json:"entity" binding:"required"`
+	Type   string `json:"type" binding:"required"`
 }
 
 // EntityEnhancementResponse represents the enhanced entities response
 type EntityEnhancementResponse struct {
-	OriginalEntities []string `json:"original_entities"`
-	EnhancedEntities []string `json:"enhanced_entities"`
-	EntityType       string   `json:"entity_type"`
-	ProcessedCount   int      `json:"processed_count"`
-	RemovedCount     int      `json:"removed_count"`
-	Thinking         string   `json:"thinking,omitempty"`
+	Entity   string `json:"entity"`
+	Verified bool   `json:"verified"`
 }

@@ -2,13 +2,12 @@ package handlers
 
 import (
 	"fmt"
-	"net/http"
 	"time"
 
 	"llm-inference/models"
 	"llm-inference/services"
 
-	"github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v2"
 )
 
 // Handler holds the service dependencies
@@ -25,42 +24,38 @@ func NewHandler(similarityService *services.SimilarityService, entityVerifier *s
 }
 
 // HealthCheck handles the health check endpoint
-func (h *Handler) HealthCheck(c *gin.Context) {
+func (h *Handler) HealthCheck(c *fiber.Ctx) error {
 	response := models.HealthResponse{
 		Status:  "healthy",
 		Service: "LLM Inference Service",
 		Uptime:  time.Now().UTC().Format(time.RFC3339),
 		Version: "0.1.0",
 	}
-	c.JSON(http.StatusOK, response)
+	return c.Status(fiber.StatusOK).JSON(response)
 }
 
-func (h *Handler) ComputeSimilarity(c *gin.Context) {
+func (h *Handler) ComputeSimilarity(c *fiber.Ctx) error {
 	text1 := c.Query("text1")
 	text2 := c.Query("text2")
 	entityType := c.Query("entity_type")
 	if text1 == "" || text2 == "" || entityType == "" {
-		c.JSON(http.StatusBadRequest, models.ErrorResponse{Error: "Both text1 and text2, and EntityType query parameters are required"})
-		return
+		return c.Status(fiber.StatusBadRequest).JSON(models.ErrorResponse{Error: "Both text1 and text2, and EntityType query parameters are required"})
 	}
 
 	result, err := h.similarityService.ComputeSimilarity(text1, text2, entityType)
-
 	if err != nil {
 		fmt.Println("Error computing similarity:", err)
-		c.JSON(http.StatusInternalServerError, models.ErrorResponse{Error: "Failed to compute similarity"})
-		return
+		return c.Status(fiber.StatusInternalServerError).JSON(models.ErrorResponse{Error: "Failed to compute similarity"})
 	}
 
-	c.JSON(http.StatusOK, result)
+	return c.Status(fiber.StatusOK).JSON(result)
 }
 
-// Verifier handles the entity enhancement endpoint
-func (h *Handler) Verifier(c *gin.Context) {
+// Verifier handles the entity verification endpoint
+func (h *Handler) Verifier(c *fiber.Ctx) error {
 	var input models.EntityEnhancementRequest
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, models.ErrorResponse{Error: err.Error()})
-		return
+	if err := c.BodyParser(&input); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(models.ErrorResponse{Error: err.Error()})
 	}
 
 	// Log request
@@ -68,31 +63,30 @@ func (h *Handler) Verifier(c *gin.Context) {
 
 	startTime := time.Now()
 
-	// Enhance entities
+	// Verify entity
 	result, err := h.entityVerifier.Verify(input.Entity, input.Type)
 	if err != nil {
 		fmt.Printf("Error enhancing entities: %v\n", err)
-		c.JSON(http.StatusInternalServerError, models.ErrorResponse{Error: "Failed to enhance entities"})
-		return
+		return c.Status(fiber.StatusInternalServerError).JSON(models.ErrorResponse{Error: "Failed to enhance entities"})
 	}
 
 	elapsed := time.Since(startTime)
 	fmt.Printf("Entity enhancement completed in %.2f seconds.\n", elapsed.Seconds())
 
-	c.JSON(http.StatusOK, result)
+	return c.Status(fiber.StatusOK).JSON(result)
 }
 
 // ServiceInfo handles the service information endpoint
-func (h *Handler) ServiceInfo(c *gin.Context) {
+func (h *Handler) ServiceInfo(c *fiber.Ctx) error {
 	response := models.ServiceInfo{
 		Title:       "LLM Inference Service",
 		Description: "A service for inference tasks using large language models.",
 		Version:     "0.1.0",
 		Endpoints: map[string]string{
-			"similarity":       "/api/v1/similarity",
-			"enhance_entities": "/api/v1/enhance-entities",
-			"health":           "/health",
+			"similarity": "/api/v1/similarity",
+			"verify":     "/api/v1/verify",
+			"health":     "/health",
 		},
 	}
-	c.JSON(http.StatusOK, response)
+	return c.Status(fiber.StatusOK).JSON(response)
 }

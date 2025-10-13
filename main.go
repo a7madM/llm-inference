@@ -8,14 +8,10 @@ import (
 	"llm-inference/handlers"
 	"llm-inference/routes"
 	"llm-inference/services"
-
-	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	cfg := config.Load()
-
-	gin.SetMode(cfg.GinMode)
 
 	ollamaService := services.NewOllamaService(cfg)
 	similarityService := services.NewSimilarityService(ollamaService)
@@ -29,7 +25,7 @@ func main() {
 	fmt.Printf("Model: %s\n", cfg.ModelName)
 	fmt.Printf("Server starting on :%s\n", cfg.Port)
 
-	if err := router.Run(":" + cfg.Port); err != nil {
+	if err := router.Listen(":" + cfg.Port); err != nil {
 		log.Fatal("Failed to start server:", err)
 	}
 }

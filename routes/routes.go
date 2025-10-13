@@ -1,62 +1,31 @@
 package routes
 
 import (
-	"net/http"
-	"os"
-
 	"llm-inference/handlers"
 
-	"github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
-// SetupRouter configures and returns the main router
-func SetupRouter(handler *handlers.Handler) *gin.Engine {
-	// Set Gin to release mode in production
-	if os.Getenv("GIN_MODE") == "" {
-		gin.SetMode(gin.ReleaseMode)
-	}
+// SetupRouter configures and returns the main Fiber app
+func SetupRouter(handler *handlers.Handler) *fiber.App {
+	app := fiber.New()
 
-	router := gin.Default()
-
-	// Add CORS middleware
-	router.Use(corsMiddleware())
+	// CORS middleware
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "*",
+		AllowMethods: "GET,POST,OPTIONS",
+		AllowHeaders: "Content-Type",
+	}))
 
 	// API routes
-	setupAPIRoutes(router, handler)
+	v1 := app.Group("/api/v1")
+	v1.Get("/similarity", handler.ComputeSimilarity)
+	v1.Post("/verify", handler.Verifier)
 
 	// Health and info routes
-	setupHealthRoutes(router, handler)
+	app.Get("/health", handler.HealthCheck)
+	app.Get("/", handler.ServiceInfo)
 
-	return router
-}
-
-// setupAPIRoutes configures the API v1 routes
-func setupAPIRoutes(router *gin.Engine, handler *handlers.Handler) {
-	v1 := router.Group("/api/v1")
-	{
-		v1.GET("/similarity", handler.ComputeSimilarity)
-		v1.POST("/verify", handler.Verifier)
-	}
-}
-
-// setupHealthRoutes configures health check and info routes
-func setupHealthRoutes(router *gin.Engine, handler *handlers.Handler) {
-	router.GET("/health", handler.HealthCheck)
-	router.GET("/", handler.ServiceInfo)
-}
-
-// corsMiddleware provides CORS support
-func corsMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Header("Access-Control-Allow-Origin", "*")
-		c.Header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-		c.Header("Access-Control-Allow-Headers", "Content-Type")
-
-		if c.Request.Method == "OPTIONS" {
-			c.AbortWithStatus(http.StatusNoContent)
-			return
-		}
-
-		c.Next()
-	}
+	return app
 }

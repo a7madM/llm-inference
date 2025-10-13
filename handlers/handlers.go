@@ -13,14 +13,14 @@ import (
 
 // Handler holds the service dependencies
 type Handler struct {
-	similarityService        *services.SimilarityService
-	entityEnhancementService *services.EntityEnhancementService
+	similarityService *services.SimilarityService
+	entityVerifier    *services.EntityVerifier
 }
 
-func NewHandler(similarityService *services.SimilarityService, entityEnhancementService *services.EntityEnhancementService) *Handler {
+func NewHandler(similarityService *services.SimilarityService, entityVerifier *services.EntityVerifier) *Handler {
 	return &Handler{
-		similarityService:        similarityService,
-		entityEnhancementService: entityEnhancementService,
+		similarityService: similarityService,
+		entityVerifier:    entityVerifier,
 	}
 }
 
@@ -55,8 +55,8 @@ func (h *Handler) ComputeSimilarity(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
-// EnhanceEntities handles the entity enhancement endpoint
-func (h *Handler) EnhanceEntities(c *gin.Context) {
+// Verifier handles the entity enhancement endpoint
+func (h *Handler) Verifier(c *gin.Context) {
 	var input models.EntityEnhancementRequest
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, models.ErrorResponse{Error: err.Error()})
@@ -64,12 +64,12 @@ func (h *Handler) EnhanceEntities(c *gin.Context) {
 	}
 
 	// Log request
-	fmt.Printf("Enhancing %d %s entities...\n", len(input.Entities), input.EntityType)
+	fmt.Printf("Enhancing %s with type %s\n", input.Entity, input.Type)
 
 	startTime := time.Now()
 
 	// Enhance entities
-	result, err := h.entityEnhancementService.EnhanceEntities(input.Entities, input.EntityType)
+	result, err := h.entityVerifier.Verify(input.Entity, input.Type)
 	if err != nil {
 		fmt.Printf("Error enhancing entities: %v\n", err)
 		c.JSON(http.StatusInternalServerError, models.ErrorResponse{Error: "Failed to enhance entities"})
@@ -77,8 +77,7 @@ func (h *Handler) EnhanceEntities(c *gin.Context) {
 	}
 
 	elapsed := time.Since(startTime)
-	fmt.Printf("Entity enhancement completed in %.2f seconds. Processed: %d, Enhanced: %d, Removed: %d\n",
-		elapsed.Seconds(), result.ProcessedCount, len(result.EnhancedEntities), result.RemovedCount)
+	fmt.Printf("Entity enhancement completed in %.2f seconds.\n", elapsed.Seconds())
 
 	c.JSON(http.StatusOK, result)
 }

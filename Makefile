@@ -38,7 +38,9 @@ push:
 	docker push $(IMAGE_NAME)
 .PHONY: release
 release:
-	build tag push
+	make build
+	make tag
+	make push
 
 # Help
 .PHONY: help

@@ -4,14 +4,8 @@
 BINARY_NAME=llm-inference
 GO_VERSION=1.25
 PORT=5080
-REGISTRY=registry.whatisgoing.com
-LOCAL_REGISTRY=localhost:5000
-IMAGE_NAME=$(LOCAL_REGISTRY)/$(BINARY_NAME):latest
-
-# Build commands
-.PHONY: build
-build:
-	docker build -t $(BINARY_NAME) .
+REGISTRY=localhost:5000
+IMAGE_NAME=$(REGISTRY)/$(BINARY_NAME):latest
 
 .PHONY: up
 up:
@@ -29,14 +23,22 @@ bash:
 .PHONY: clean-images
 clean-images:
 	docker rmi $(BINARY_NAME) || true
-
-.PHONY: release-local
-release-local:
-	docker build -t $(BINARY_NAME) .
-	docker tag $(BINARY_NAME) $(IMAGE_NAME)
-	docker push $(IMAGE_NAME)
-	docker push $(REGISTRY)/$(BINARY_NAME):latest
 	
+.PHONY: build
+build:
+	docker build -t $(BINARY_NAME) .
+
+
+.PHONY: tag
+tag:
+	docker tag $(BINARY_NAME) $(IMAGE_NAME)
+
+.PHONY: push
+push:
+	docker push $(IMAGE_NAME)
+.PHONY: release
+release:
+	build tag push
 
 # Help
 .PHONY: help

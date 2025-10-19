@@ -40,11 +40,9 @@ tag:
 push:
 	docker push $(VERSIONED_IMAGE_NAME)
 	docker push $(LATEST_IMAGE_NAME)
+
 .PHONY: release
-release:
-	make build
-	make tag
-	make push
+release: build tag push
 
 # Help
 .PHONY: help

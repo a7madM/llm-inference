@@ -11,9 +11,10 @@ import (
 
 // Verifier handles the entity verification endpoint
 func (h *Handler) Verifier(c *fiber.Ctx) error {
-	var input models.EntityEnhancementRequest
+	var input models.EntityVerifierRequest
+
 	if err := c.BodyParser(&input); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(models.ErrorResponse{Error: err.Error()})
+		return c.Status(fiber.StatusBadRequest).JSON(models.ErrorResponse{Error: "Invalid request body"})
 	}
 
 	// Log request
@@ -29,7 +30,7 @@ func (h *Handler) Verifier(c *fiber.Ctx) error {
 	}
 
 	elapsed := time.Since(startTime)
-	fmt.Printf("Entity enhancement completed in %.2f seconds.\n", elapsed.Seconds())
+	fmt.Printf("Entity enhancement completed in %.2f seconds, and results -> %v\n", elapsed.Seconds(), result)
 
 	return c.Status(fiber.StatusOK).JSON(result)
 }

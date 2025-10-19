@@ -51,6 +51,5 @@ func (s *OllamaService) CallAPI(prompt string) (models.OllamaResponse, error) {
 	}
 	ollamaResp.ParseJSON()
 
-	fmt.Println("Ollama API Response:", ollamaResp)
 	return ollamaResp, nil
 }

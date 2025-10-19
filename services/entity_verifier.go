@@ -18,9 +18,9 @@ func NewEntityEnhancementService(ollama *OllamaService) *EntityVerifier {
 }
 
 // EnhanceEntities processes an array of entities to improve quality and remove duplicates
-func (s *EntityVerifier) Verify(entity, entityType string) (*models.EntityEnhancementResponse, error) {
+func (s *EntityVerifier) Verify(entity, entityType string) (*models.EntityVerifierResponse, error) {
 	if entity == "" {
-		return &models.EntityEnhancementResponse{
+		return &models.EntityVerifierResponse{
 			Entity:   entity,
 			Verified: false,
 		}, nil
@@ -40,7 +40,7 @@ func (s *EntityVerifier) Verify(entity, entityType string) (*models.EntityEnhanc
 		return nil, fmt.Errorf("failed to parse enhancement response: %v", err)
 	}
 
-	return &models.EntityEnhancementResponse{
+	return &models.EntityVerifierResponse{
 		Entity:   entity,
 		Verified: enhancedResult.Verified,
 	}, nil
@@ -68,8 +68,9 @@ Rules:
 7. The entity is not a valid location if it is a non-specific place like "city", "country", or "region"
 8. The entity is not a valid person name if it is a common noun or title like "doctor", "engineer", or "teacher"
 9. The entity is not a valid organization if it is a generic term like "company", "institution", or "agency"
-10. The entity is not valid location if it contains two or more different locations combined, like "الولايات المتحدة وكندا"
-11. Return results in JSON format only
+10. The entity is not valid event if it is a general term like "meeting", "conference", or "festival", month or year name
+11. The entity is not valid location if it contains two or more different locations combined, like "الولايات المتحدة وكندا"
+12. Return results in JSON format only
 
 Required JSON structure:
 {

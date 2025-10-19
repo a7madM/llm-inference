@@ -80,14 +80,14 @@ type SimilarityResponse struct {
 	Thinking        string  `json:"thinking,omitempty"`
 }
 
-// EntityEnhancementRequest represents the request for entity enhancement
-type EntityEnhancementRequest struct {
-	Entity string `json:"entity" binding:"required"`
-	Type   string `json:"type" binding:"required"`
+// EntityVerifierRequest represents the request for entity verification
+type EntityVerifierRequest struct {
+	Entity string `json:"entity"`
+	Type   string `json:"type"`
 }
 
-// EntityEnhancementResponse represents the enhanced entities response
-type EntityEnhancementResponse struct {
+// EntityVerifierResponse represents the verified entities response
+type EntityVerifierResponse struct {
 	Entity   string `json:"entity"`
 	Verified bool   `json:"verified"`
 }

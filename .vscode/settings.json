@@ -1,0 +1,19 @@
+{
+  // Enable bidirectional text support in the integrated terminal (xterm.js)
+  "terminal.integrated.enableBidi": true,
+
+  // Use a font family that includes Arabic glyphs and proper shaping
+  "terminal.integrated.fontFamily": "DejaVu Sans Mono, Cascadia Code, Noto Sans Arabic, Menlo, Monaco, 'Courier New', monospace",
+
+  // Disable custom glyph renderer to allow complex script shaping (Arabic)
+  "terminal.integrated.customGlyphs": false,
+
+  // Prefer DOM-based rendering for better complex text shaping
+  "terminal.integrated.gpuAcceleration": "off",
+
+  // Prefer opening external terminal from Explorer/commands in external app
+  "terminal.explorerKind": "external",
+
+  // On macOS, use iTerm as the external terminal (change to Terminal.app if preferred)
+  "terminal.external.osxExec": "iTerm.app"
+}

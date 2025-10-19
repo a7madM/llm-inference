@@ -1,0 +1,31 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vscode/master/extensions/json/schemas/tasks.schema.json",
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Arabic echo test (integrated)",
+      "type": "shell",
+      "command": "printf '%s\n' 'مرحبا بالعالم'",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run server (WezTerm)",
+      "type": "shell",
+      "command": "go run ./main.go",
+      "problemMatcher": [],
+      "options": {
+        "env": {
+          "LANG": "ar_SA.UTF-8",
+          "LC_ALL": "ar_SA.UTF-8"
+        }
+      },
+      "presentation": {
+        "reveal": "never",
+        "panel": "dedicated"
+      },
+      "runOptions": {
+        "runOn": "default"
+      }
+    }
+  ]
+}

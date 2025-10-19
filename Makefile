@@ -5,7 +5,9 @@ BINARY_NAME=llm-inference
 GO_VERSION=1.25
 PORT=5080
 REGISTRY=localhost:5000
-IMAGE_NAME=$(REGISTRY)/$(BINARY_NAME):latest
+GIT_COMMIT=$(shell git rev-parse --short HEAD)
+VERSIONED_IMAGE_NAME=$(REGISTRY)/$(BINARY_NAME):$(GIT_COMMIT)
+LATEST_IMAGE_NAME=$(REGISTRY)/$(BINARY_NAME):latest
 
 .PHONY: up
 up:
@@ -31,11 +33,13 @@ build:
 
 .PHONY: tag
 tag:
-	docker tag $(BINARY_NAME) $(IMAGE_NAME)
+	docker tag $(BINARY_NAME) $(VERSIONED_IMAGE_NAME)
+	docker tag $(BINARY_NAME) $(LATEST_IMAGE_NAME)
 
 .PHONY: push
 push:
-	docker push $(IMAGE_NAME)
+	docker push $(VERSIONED_IMAGE_NAME)
+	docker push $(LATEST_IMAGE_NAME)
 .PHONY: release
 release:
 	make build

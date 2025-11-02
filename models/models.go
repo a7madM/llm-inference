@@ -43,6 +43,7 @@ type OllamaRequest struct {
 	Model  string `json:"model"`
 	Prompt string `json:"prompt"`
 	Stream bool   `json:"stream"`
+	Token  string `json:"token,omitempty"`
 }
 
 // OllamaResponse represents a response from the Ollama API
